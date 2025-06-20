@@ -1,0 +1,12 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+set -euo pipefail
+
+scriptpath="$(realpath "$0")"
+scriptdir="$(dirname "$scriptpath")"
+source "$scriptdir/_common"
+scriptname="$(basename "$scriptpath")"
+
+podman run "${podman_args[@]}" "$image:$tag" "$scriptname" "$@"

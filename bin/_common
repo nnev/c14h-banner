@@ -1,0 +1,59 @@
+#!/usr/bin/env bash
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+set -euo pipefail
+
+# Check if a command exists.
+#
+# If it doesn't, fail with a descriptive error message.
+#
+# Arguments:
+#   1: Name of the command to check for.
+function _exists {
+    cmd="${1:?function '_exists' requires an argument}"
+    if ! command -v "$cmd" &> /dev/null; then
+        printf "\e[31m%s\n%s\e[0m\n" \
+            "This command requires '$cmd' to run" \
+            "Please install '$cmd' and try again" 1>&2
+        return 1
+    fi
+}
+_exists podman
+_exists realpath
+_exists dirname
+
+# Container setup
+image="${CONTAINER_IMAGE:-}"
+tag="${CONTAINER_TAG:-}"
+
+scriptpath="$(realpath "$0")"
+scriptdir="$(dirname "$scriptpath")"
+repodir="$(dirname "$scriptdir")"
+
+if [[ -f "$repodir/.env" ]] && [[ -z "${_dotenv_sourced:-}" ]]; then
+    # Change directory to ensure expansions involving `$PWD` remain intact
+    pushd "$repodir" &> /dev/null
+    # shellcheck source=../.env
+    . .env
+    popd &> /dev/null
+fi
+
+# Set image and tag in case the user hasn't overridden them
+[[ -n "$image" ]] || image="${CONTAINER_IMAGE:?}"
+[[ -n "$tag" ]] || tag="${CONTAINER_TAG:?}"
+declare -rx image tag
+
+declare -a podman_args=(
+    --rm -i
+    --log-driver none
+    --security-opt label=disable
+    -v "$repodir:$repodir" -w "$(realpath "$PWD")"
+    # Env variables for required tools
+    -e "MAKEFLAGS"
+    -e "GNUMAKEFLAGS"
+)
+
+if [[ -t 0 ]]; then
+    podman_args+=("-t")
+fi
