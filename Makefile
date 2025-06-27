@@ -106,7 +106,8 @@ config.yml:
 
 .PHONY: clean
 clean:
-	rm -rf cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
+	rm -rf cc_icon_{logo,sa,by}.jpeg
+	rm -rf {start,end}_banner.{png,pdf,svg,jpeg}
 
 .PHONY: mrproper
 mrproper: clean
