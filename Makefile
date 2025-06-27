@@ -33,14 +33,19 @@ MAGICKFLAGS =
 magick = ${MAGICK} ${MAGICKFLAGS}
 
 default: start_banner.png end_banner.png
-	@echo "Outputs are available in: $^"
+	@echo -e "\e[1;35mOutputs are available in: $^\e[0m"
 
+# Just for comparison
 original_start_banner.svg:
 	${curl} -o "$@" "https://www.noname-ev.de/wiki/uploads/1/13/Banner_2.svg"
 
 original_end_banner.svg:
 	${curl} -o "$@" "https://www.noname-ev.de/wiki/uploads/3/3c/Banner_1.svg"
 
+
+#
+# Start and End Banner
+#
 %.svg: %.typ
 	${typst} compile -f "svg" "$<" "$@"
 
@@ -104,6 +109,9 @@ config.yml:
 	YAML
 
 
+#
+# Maintenance and stuff
+#
 .PHONY: clean
 clean:
 	rm -rf cc_icon_{logo,sa,by}.jpeg
