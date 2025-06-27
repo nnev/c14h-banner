@@ -77,6 +77,27 @@ cc_icon_%.jpeg: cc_icon_%.svg
 	${magick} -background "#000000" -density 1200 -quality 92 "nnev_$<" "$@"
 	rm -f "nnev_$<"
 
+
+#
+# Config handling
+#
+start_banner.typ: config.yml
+
+# No reason to be so strict with naming
+%.yml: %.yaml
+	cp "$<" "$@"
+
+config.yml:
+	@cat <<-YAML > "$@"
+		title: Ein recht langer Titel
+		subtitle: |
+		    Untertitel
+		    mit Zeilenumbruch!
+		author: Chaotischer Chaot
+		date: 2025-06-12
+	YAML
+
+
 .PHONY: clean
 clean:
 	rm -rf cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
