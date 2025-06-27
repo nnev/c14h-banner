@@ -63,7 +63,9 @@
         )[
             #text(theme.fontsizes.title, metadata.title, weight: "bold")
             #v(1.6em, weak: true)
-            #text(theme.fontsizes.subtitle, metadata.subtitle, weight: "bold")
+            #if "subtitle" in metadata {
+                text(theme.fontsizes.subtitle, metadata.subtitle, weight: "bold")
+            }
         ],
     )
     #block(
