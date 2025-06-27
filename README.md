@@ -3,10 +3,12 @@
 <!--toc:start-->
 - [c14h Start-/Endfolien][0]
     - [Benutzen][a]
+    - [Vorbereiten][b]
     - [Lizenz][d]
 
 [0]: #c14h-start-endfolien
 [a]: #benutzen
+[b]: #vorbereiten
 [d]: #lizenz
 <!--toc:end-->
 
@@ -17,12 +19,34 @@ Die Start- und Endfolien bzw. Banner für die Videouploads der [chaotischen Vier
 
 ## Benutzen
 
+Vor dem ersten Benutzen, sollte man die Ausführung des Projektes [einmal vorbereiten][b].
+
+Die Metadaten für das Startbanner werden aus einer Konfigurationsdatei `config.yml` ausgelesen. Eine
+Standardkonfiguration wird automatisch von `make` erzeugt, sofern keine vorhanden ist. Man kann sie
+aber mit folgendem Befehl auch händisch erzeugen:
+
+```bash
+bin/make config.yml
+```
+
+Anschließend muss man die Einstellungen mit einem Editor anpassen. Wenn die Konfiguration die
+gewünschten Werte enthält, werden die Banner wie folgt erzeugt:
+
+```bash
+bin/make
+```
+
+Die erzeugten Dateien zeigt das `Makefile` anschließend in der Ausgabe an.
+
+
+## Vorbereiten
+
 Dieses repo nutzt GNU `make` als Buildsystem und einen OCI-Container für das Verwalten der
 Abhängigkeiten. Um das repo zu benutzen, müssen wenigstens folgende Programme installiert sein:
 
-- [GNU bash][a0]
-- [GNU coreutils][a1] (oder eine andere Implementierung von `realpath`, `basename` und `dirname`)
-- [podman][a2]
+- [GNU bash][b0]
+- [GNU coreutils][b1] (oder eine andere Implementierung von `realpath`, `basename` und `dirname`)
+- [podman][b2]
 
 Anschließend baut man einmal den Container:
 
@@ -38,13 +62,13 @@ bin/make
 ```
 
 > Hinweis: Sofern die Installation/Anwendung von `podman` keine Option ist, kann man die benötigten
-> Abhängigkeiten auch lokal installieren. Das [Containerfile.develop][a3] zeigt, was benötigt wird.
+> Abhängigkeiten auch lokal installieren. Das [Containerfile.develop][b3] zeigt, was benötigt wird.
 > **Für dieses Setup gibt es allerdings keine Unterstützung von uns!**
 
-[a0]: https://www.gnu.org/software/bash/
-[a1]: https://www.gnu.org/software/coreutils/
-[a2]: https://podman.io/
-[a3]: ./Containerfile.develop
+[b0]: https://www.gnu.org/software/bash/
+[b1]: https://www.gnu.org/software/coreutils/
+[b2]: https://podman.io/
+[b3]: ./Containerfile.develop
 
 
 ## Lizenz
