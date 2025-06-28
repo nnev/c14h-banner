@@ -8,7 +8,7 @@
         spacing: 0pt,
         align(
             horizon,
-            image("nnev_icon.svg", width: 80%),
+            image("nnev_logo.jpeg", width: 80%),
         ),
     )
 ]
