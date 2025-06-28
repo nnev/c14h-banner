@@ -33,14 +33,19 @@ MAGICKFLAGS =
 magick = ${MAGICK} ${MAGICKFLAGS}
 
 default: start_banner.png end_banner.png
-	@echo "Outputs are available in: $^"
+	@echo -e "\e[1;35mOutputs are available in: $^\e[0m"
 
+# Just for comparison
 original_start_banner.svg:
 	${curl} -o "$@" "https://www.noname-ev.de/wiki/uploads/1/13/Banner_2.svg"
 
 original_end_banner.svg:
 	${curl} -o "$@" "https://www.noname-ev.de/wiki/uploads/3/3c/Banner_1.svg"
 
+
+#
+# Start and End Banner
+#
 %.svg: %.typ
 	${typst} compile -f "svg" "$<" "$@"
 
@@ -54,6 +59,12 @@ original_end_banner.svg:
 #	 kind of offset introduced near the top third. Looks very much like a bug to me.
 %.png: %.pdf
 	${pdftocairo} -scale-to-x 1920 -scale-to-y 1080 -singlefile -png "$<" "$*"
+
+# Ensures the files are "rebuilt" when any of their prerequisites (defined later on) are updated.
+# Otherwise changes to e.g. the `config.yml` or `common.typ` will not cause a rebuild. Since the
+# files are part of the git repo it's safe to assume they always exist.
+start_banner.typ end_banner.typ:
+	@touch -c "$@"
 
 # Use rasterized versions of the logos because typst ruins the SVGs for display.
 start_banner.typ end_banner.typ: common.typ cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
@@ -77,9 +88,34 @@ cc_icon_%.jpeg: cc_icon_%.svg
 	${magick} -background "#000000" -density 1200 -quality 92 "nnev_$<" "$@"
 	rm -f "nnev_$<"
 
+
+#
+# Config handling
+#
+start_banner.typ: config.yml
+
+# No reason to be so strict with naming
+%.yml: %.yaml
+	cp "$<" "$@"
+
+config.yml:
+	@cat <<-YAML > "$@"
+		title: Ein recht langer Titel
+		subtitle: |
+		    Untertitel
+		    mit Zeilenumbruch!
+		author: Chaotischer Chaot
+		date: 2025-06-12
+	YAML
+
+
+#
+# Maintenance and stuff
+#
 .PHONY: clean
 clean:
-	rm -rf cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
+	rm -rf cc_icon_{logo,sa,by}.jpeg
+	rm -rf {start,end}_banner.{png,pdf,svg,jpeg}
 
 .PHONY: mrproper
 mrproper: clean
