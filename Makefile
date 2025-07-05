@@ -67,7 +67,9 @@ start_banner.typ end_banner.typ:
 	@touch -c "$@"
 
 # Use rasterized versions of the logos because typst ruins the SVGs for display.
-start_banner.typ end_banner.typ: common.typ cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
+start_banner.typ end_banner.typ: common.typ
+start_banner.typ: cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
+end_banner.typ: nnev_logo.jpeg
 
 cc_icon_logo.svg:
 	${curl} -o "$@" "https://mirrors.creativecommons.org/presskit/icons/cc.svg"
@@ -87,6 +89,11 @@ cc_icon_%.jpeg: cc_icon_%.svg
 	sed -E -e 's/path /path fill="#E12617" /g' -e 's/FFFFFF/000000/g' "$<" > "nnev_$<"
 	${magick} -background "#000000" -density 1200 -quality 92 "nnev_$<" "$@"
 	rm -f "nnev_$<"
+
+nnev_logo.jpeg: nnev_logo.svg
+	sed -E -e 's/fill:#000000/fill:#e12617/g' "$<" > "$<.painted"
+	${magick} -background "#000000" -density 300 -quality 92 "$<.painted" "$@"
+	rm -f "$<.painted"
 
 
 #
@@ -114,7 +121,7 @@ config.yml:
 #
 .PHONY: clean
 clean:
-	rm -rf cc_icon_{logo,sa,by}.jpeg
+	rm -rf cc_icon_{logo,sa,by}.jpeg nnev_logo.jpeg
 	rm -rf {start,end}_banner.{png,pdf,svg,jpeg}
 
 .PHONY: mrproper
