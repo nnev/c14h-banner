@@ -24,14 +24,6 @@ TYPST := $(call get_executable,typst)
 TYPSTFLAGS :=
 typst := ${TYPST} ${TYPSTFLAGS}
 
-PDFTOCAIRO = $(call get_executable,pdftocairo)
-PDFTOCAIROFLAGS =
-pdftocairo = ${PDFTOCAIRO} ${PDFTOCAIROFLAGS}
-
-MAGICK = $(call get_executable,magick)
-MAGICKFLAGS =
-magick = ${MAGICK} ${MAGICKFLAGS}
-
 default: start_banner.png end_banner.png
 	@echo -e "\e[1;35mOutputs are available in: $^\e[0m"
 
@@ -47,18 +39,16 @@ original_end_banner.svg:
 # Start and End Banner
 #
 %.svg: %.typ
-	${typst} compile -f "svg" "$<" "$@"
+    ${typst} compile -f "svg" "$<" "$@"
 
 %.pdf: %.typ
 	${typst} compile -f "pdf" "$<" "$@"
 
-# NOTE: `typst` is capable of producing PNG outputs on its own, but:
-# 1. We cannot control the exact output dimensions, we can only approximate them using the DPI. But
-#	 even then, the result is never exact and `kdenlive` doesn't handle that well.
-# 2. The CC icons are skewered in the conversion process and I have no idea why. There's a weird
-#	 kind of offset introduced near the top third. Looks very much like a bug to me.
-%.png: %.pdf
-	${pdftocairo} -scale-to-x 1920 -scale-to-y 1080 -singlefile -png "$<" "$*"
+# image is ̂16cm x 9cm
+# 1920px/16cm = 1080px/9cm = 1920px/(16/2.54)inch = 1080px/(9/2.54)inch
+# = 304.8 px/inch
+%.png: %.typ
+	${typst} compile -f "png" --ppi 304.8 "$<" "$@"
 
 # Ensures the files are "rebuilt" when any of their prerequisites (defined later on) are updated.
 # Otherwise changes to e.g. the `config.yml` or `common.typ` will not cause a rebuild. Since the
@@ -68,8 +58,8 @@ start_banner.typ end_banner.typ:
 
 # Use rasterized versions of the logos because typst ruins the SVGs for display.
 start_banner.typ end_banner.typ: common.typ
-start_banner.typ: cc_icon_logo.jpeg cc_icon_sa.jpeg cc_icon_by.jpeg
-end_banner.typ: nnev_logo.jpeg
+start_banner.typ: nnev_cc_icon_logo.svg nnev_cc_icon_sa.svg nnev_cc_icon_by.svg
+end_banner.typ: nnev_logo_red.svg
 
 cc_icon_logo.svg:
 	${curl} -o "$@" "https://mirrors.creativecommons.org/presskit/icons/cc.svg"
@@ -80,21 +70,11 @@ cc_icon_sa.svg:
 cc_icon_by.svg:
 	${curl} -o "$@" "https://mirrors.creativecommons.org/presskit/icons/by.svg"
 
-# Transforms the SVG to JPEG, because the SVG uses ridiculously small dimensions for display. Now in
-# theory this shouldn't be a problem, of course, but both `typst` and `kdenlive` cannot sensible
-# handle this. Both rasterize the SVG for final display and it looks *horrible*.
-# But at least this transformation allows us to adapt the colors in the final output to align with
-# our slide theme.
-cc_icon_%.jpeg: cc_icon_%.svg
-	sed -E -e 's/path /path fill="#E12617" /g' -e 's/FFFFFF/000000/g' "$<" > "nnev_$<"
-	${magick} -background "#000000" -density 1200 -quality 92 "nnev_$<" "$@"
-	rm -f "nnev_$<"
+nnev_logo_red.svg: nnev_logo.svg
+	sed -E -e 's/fill:#000000/fill:#E12617/g' "$<" > "$@"
 
-nnev_logo.jpeg: nnev_logo.svg
-	sed -E -e 's/fill:#000000/fill:#e12617/g' "$<" > "$<.painted"
-	${magick} -background "#000000" -density 300 -quality 92 "$<.painted" "$@"
-	rm -f "$<.painted"
-
+nnev_cc_icon_%.svg: cc_icon_%.svg
+	sed -E -e 's/path /path fill="#E12617" /g' -e 's/FFFFFF/000000/g' "$<" > "$@"
 
 #
 # Config handling
@@ -121,8 +101,8 @@ config.yml:
 #
 .PHONY: clean
 clean:
-	rm -rf cc_icon_{logo,sa,by}.jpeg nnev_logo.jpeg
-	rm -rf {start,end}_banner.{png,pdf,svg,jpeg}
+	rm -f nnev_cc_icon_{logo,sa,by}.svg
+	rm -f {start,end}_banner.{png,svg,pdf}
 
 .PHONY: mrproper
 mrproper: clean
