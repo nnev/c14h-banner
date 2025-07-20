@@ -39,7 +39,7 @@ original_end_banner.svg:
 # Start and End Banner
 #
 %.svg: %.typ
-    ${typst} compile -f "svg" "$<" "$@"
+	${typst} compile -f "svg" "$<" "$@"
 
 %.pdf: %.typ
 	${typst} compile -f "pdf" "$<" "$@"
@@ -57,9 +57,8 @@ start_banner.typ end_banner.typ:
 	@touch -c "$@"
 
 # Use rasterized versions of the logos because typst ruins the SVGs for display.
-start_banner.typ end_banner.typ: common.typ
-start_banner.typ: nnev_cc_icon_logo.svg nnev_cc_icon_sa.svg nnev_cc_icon_by.svg
-end_banner.typ: nnev_logo_red.svg
+start_banner.typ end_banner.typ: common.typ cc_icon_logo.svg cc_icon_sa.svg cc_icon_by.svg
+end_banner.typ: nnev_logo.svg
 
 cc_icon_logo.svg:
 	${curl} -o "$@" "https://mirrors.creativecommons.org/presskit/icons/cc.svg"
@@ -70,11 +69,6 @@ cc_icon_sa.svg:
 cc_icon_by.svg:
 	${curl} -o "$@" "https://mirrors.creativecommons.org/presskit/icons/by.svg"
 
-nnev_logo_red.svg: nnev_logo.svg
-	sed -E -e 's/fill:#000000/fill:#E12617/g' "$<" > "$@"
-
-nnev_cc_icon_%.svg: cc_icon_%.svg
-	sed -E -e 's/path /path fill="#E12617" /g' -e 's/FFFFFF/000000/g' "$<" > "$@"
 
 #
 # Config handling
@@ -101,7 +95,6 @@ config.yml:
 #
 .PHONY: clean
 clean:
-	rm -f nnev_cc_icon_{logo,sa,by}.svg
 	rm -f {start,end}_banner.{png,svg,pdf}
 
 .PHONY: mrproper
