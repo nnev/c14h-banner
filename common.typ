@@ -10,6 +10,24 @@
     ),
 )
 
+/// Prepare the NoName e.V. logo for display in the banner.
+///
+/// Overwrites the foreground (stroke) color to match the configured theme.
+///
+/// -> bytes
+#let nnev_logo(
+    /// Path to the base (unmodified) NoName e.V. logo. The logo must be a SVG file.
+    ///
+    /// -> str
+    path
+) = {
+    let raw_svg = read(path, encoding: "utf8")
+    // Adapt foreground color to whatever the theme says
+    let themed_icon = raw_svg.replace("fill:#000000", "fill:" + theme.foreground.to-hex())
+
+    bytes(themed_icon)
+}
+
 #let banner(content, theme: theme) = {
     set text(
         fill: theme.foreground,
