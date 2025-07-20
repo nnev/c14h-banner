@@ -42,9 +42,9 @@
                     columns: (1cm, 1cm, 1cm),
                     gutter: 5pt,
                     align: (center, center, center),
-                    image("cc_icon_logo.jpeg"),
-                    image("cc_icon_by.jpeg"),
-                    image("cc_icon_sa.jpeg"),
+                    image("nnev_cc_icon_logo.svg"),
+                    image("nnev_cc_icon_by.svg"),
+                    image("nnev_cc_icon_sa.svg"),
                 )
                 #v(-0.7em)
                 #link("https://creativecommons.org/licenses/by-sa/4.0/")

@@ -1,4 +1,4 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 FROM docker.io/library/alpine:3
 
-RUN apk add --no-cache bash make git sed curl typst poppler-utils imagemagick imagemagick-svg
+RUN apk add --no-cache bash make git sed curl typst
