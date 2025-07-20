@@ -39,7 +39,7 @@ original_end_banner.svg:
 # Start and End Banner
 #
 %.svg: %.typ
-    ${typst} compile -f "svg" "$<" "$@"
+	${typst} compile -f "svg" "$<" "$@"
 
 %.pdf: %.typ
 	${typst} compile -f "pdf" "$<" "$@"
