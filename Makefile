@@ -57,8 +57,8 @@ start_banner.typ end_banner.typ:
 	@touch -c "$@"
 
 # Use rasterized versions of the logos because typst ruins the SVGs for display.
-start_banner.typ end_banner.typ: common.typ
-start_banner.typ: nnev_cc_icon_logo.svg nnev_cc_icon_sa.svg nnev_cc_icon_by.svg
+start_banner.typ end_banner.typ: \
+	common.typ nnev_cc_icon_logo.svg nnev_cc_icon_sa.svg nnev_cc_icon_by.svg
 end_banner.typ: nnev_logo_red.svg
 
 cc_icon_logo.svg:
